@@ -1,0 +1,21 @@
+---
+# tasks file for ansible-role-users
+- name: Make sure wheel group is present
+  group:
+    name: wheel
+    state: present
+
+- name: Allow wheel group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+
+- name: Add users to wheel group
+  user:
+    name: "{{ item }}"
+    groups: root,wheel
+    append: yes
+    password: $6$rounds=656000$Sqa7VyuNhm/2zbwz$e0d77YXjDZWJG/cvMRbKJylnDCPdnNWMg2ccPvvgV76tmqB5wxEENIYzg./jjWdI4blIRO18sD6DJ6H779pOy/
+  with_items: "{{ users }}"
